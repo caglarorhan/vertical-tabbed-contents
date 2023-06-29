@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Vertical Tabbed Contents</title>
+  <style>
+    .VTC-container {
+      display: flex;
+      height: 500px;
+    }
+
+    .VTC-tabs {
+      flex-basis: 20%;
+      border:0;
+    }
+
+    .VTC-tab {
+      padding: 10px;
+      cursor: pointer;
+      border:0;
+    }
+
+    .VTC-tab:hover {
+      background-color: #e5e5e5;
+    }
+
+    .VTC-tab.active {
+      background-color: #ddd;
+      position: relative;
+      border:2px solid #ccc;
+      border-right: none;
+    }
+
+    .VTC-tab.active:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -1px;
+      bottom: 0;
+      width: 3px;
+      z-index: 1;
+      border-right:none !important;
+    }
+
+    .VTC-content {
+      flex-basis: 80%;
+      padding: 10px;
+      margin-left: -1px;
+      border:1px solid #ccc;
+      background-color: #ddd;
+    }
+
+  </style>
+  <script>
+    let theData={
+      'y654654asda':{
+        title:"Test 1",
+        isDisplayed:false,
+        content:`Text 1 contenti <b>filan</b>`
+      },
+      'asdasd798':{
+        title:"Test 2",
+        isDisplayed:false,
+        isPreSelected:true,
+        content:`Test <i>2</i> contenti`
+      },
+      'sdf8sd9f80':{
+        title:"Test 3",
+        isDisplayed:false,
+        content:`Test contenti`
+      },
+      'hfg980d9g':{
+        title:"Test 4",
+        isDisplayed:false,
+        content:`Test contenti`
+      },
+      'wer9wer9w80er':{
+        title:"Test 5",
+        isDisplayed:false,
+        content:`Test contenti`
+      },
+      'w809asd8a9sd':{
+        title:"Test 6",
+        isDisplayed:false,
+        content:`Test contenti`
+      },
+    }
+    let VTC = {
+      tabsData:{},
+      async init(mainTargetClass){
+        await this.createTabsAndContentDivs(mainTargetClass); // container divs created
+        await this.getTabsData(); // data obtained
+        await this.createTabsFromData(); // creating tabs from data
+      },
+      async createTabsAndContentDivs(mainTargetClass){
+        let mainTarget = document.querySelector(`.${mainTargetClass}`);
+        let tabsContainer = document.createElement('div');
+        let tabContent = document.createElement('div');
+        tabContent.classList.add('VTC-content');
+        tabsContainer.classList.add('VTC-tabs');
+        await mainTarget.append(tabsContainer);
+        await mainTarget.append(tabContent);
+      },
+      async createTabsFromData(){
+        let tabsContainer = document.querySelector('.VTC-tabs');
+        Object.keys(this.tabsData).forEach(key=>{
+          let tabData = this.tabsData[key];
+          let oTab = document.createElement('div');
+          oTab.id =key;
+          oTab.classList.add('VTC-tab');
+          oTab.innerText = tabData.title;
+          tabsContainer.append(oTab);
+          this.tabsData[key].isDisplayed=true;
+          if(this.tabsData[key].isPreSelected){oTab.classList.add('active')}
+          oTab.addEventListener('click',(event)=>{
+            this.showTab(event.target.id);
+          })
+        })
+      },
+      async getTabsData(){
+        // get some data from source or web
+        let fetchedData = theData;
+        console.log(fetchedData);
+        Object.keys(fetchedData).forEach(tabId=>{
+            this.tabsData[tabId]=theData[tabId];
+        })
+        return true;
+      },
+      showTab(targetTabId){
+        let tabs = document.getElementsByClassName("VTC-tab");
+        for (let i = 0; i < tabs.length; i++) {
+          tabs[i].classList.remove("active");
+        }
+        let selectedTab = document.querySelector(`#${targetTabId}`);
+        selectedTab.classList.add("active");
+        document.querySelector('.VTC-content').innerHTML=this.tabsData[selectedTab.id].content;
+      }
+
+    };
+    window.addEventListener('load',()=>{
+      VTC.init('VTC-container');
+    })
+
+  </script>
+</head>
+<body>
+<div class="VTC-container">
+
+</div>
+</body>
+</html>
